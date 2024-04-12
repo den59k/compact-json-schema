@@ -1,0 +1,24 @@
+{
+  "name": "compact-json-schema",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Denis Hohryakov <den59k@gmail.com>",
+  "repository": "https://github.com/den59k/compact-json-schema",
+  "main": "src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vite": "^5.2.8",
+    "vitest": "^1.5.0"
+  },
+  "keywords": [
+    "fastify",
+    "schema",
+    "json",
+    "minify"
+  ]
+}
