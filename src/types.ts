@@ -38,14 +38,11 @@ export type SchemaType<T extends SchemaItem> =
   T extends FullType? GetType<T["type"]>: 
   T extends ObjectParams? GetObjectType<T>: GetType<T>
 
-type KeyOfType<T, V> = keyof {
-  [P in keyof T as T[P] extends V? P: never]: any
-}
+type EmptyType = { type: JsonOptional } | { type: NullableJson } | JsonOptional | NullableJson
 
 type GetObjectType<T extends ObjectParams> = {
-  [ K in KeyOfType<T, { type: JsonOptional } | JsonOptional> ]?: SchemaType<T[K]>
-} & {
-  [ K in KeyOfType<T, { type: JsonType } | JsonType> ]: SchemaType<T[K]>
-} & {
-  [ K in KeyOfType<T, { type: NullableJson } | NullableJson> ]?: SchemaType<T[K]> | null
+  [ K in keyof T ]: 
+    T[K] extends NullableJson | { type: NullableJson }? SchemaType<T[K]> | null | undefined: 
+    T[K] extends JsonOptional | { type: JsonOptional }? SchemaType<T[K]> | undefined:
+    SchemaType<T[K]>
 }
