@@ -67,3 +67,30 @@ it("test array schema", () => {
     }
   })
 })
+
+it("test anyOf items", () => {
+  const schema = unfoldSchema({ name: [ "string", "integer" ] })
+  expect(schema).toEqual({
+    type: "object",
+    properties: {
+      name: {
+        oneOf: [
+          { type: "string" },
+          { type: "integer" }
+        ]
+      }
+    },
+    required: [ "name" ]
+  })
+})
+
+it("test enum", () => {
+  const schema = unfoldSchema({ name: [ "name", "surname" ] })
+  expect(schema).toEqual({
+    type: "object",
+    properties: {
+      name: { type: "string", enum: [ "name", "surname" ]}
+    },
+    required: [ "name" ]
+  })
+})

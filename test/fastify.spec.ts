@@ -118,3 +118,33 @@ it("very compact schema with body v2", async () => {
     }
   })
 })
+
+it("test one of schema", async () => {
+  const body = schema({ name: [ "file" ], filename: "string" })
+  const body2 = schema({ name: [ "image" ], size: "number" })
+
+  expect(sc([body, body2], "body")).toEqual({
+    schema: {
+      body: {
+        oneOf: [
+          {
+            type: "object",
+            properties: { 
+              name: { type: "string",  const: "file" },
+              filename: { type: "string" }
+            },
+            required: [ "name", "filename" ]
+          },
+          {
+            type: "object",
+            properties: { 
+              name: { type: "string",  const: "image" },
+              size: { type: "number" }
+            },
+            required: [ "name", "size" ]
+          }
+        ]
+      }
+    }
+  })
+})

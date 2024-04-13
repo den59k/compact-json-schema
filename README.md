@@ -29,7 +29,7 @@ Converts to
 There are 5 basic types, which are typed as a relevant string:
 
 ```
-"string" | "boolean" | "number" | "object" | "array"
+"string" | "boolean" | "number" | "integer" | "object" | "array"
 ```
 
 Each type can also be undefined or nullable:
@@ -55,6 +55,41 @@ const shortSchema = schema({ user: { name: "string" } })
 ```
 
 As you can guess, the full path also allows you to specify the necessary settings for validation, while the short path just uses the defaults.
+
+## Compact form for union types
+
+You can use array of items for shorthand enum or oneOf types:
+
+```
+const body = schema({ name: [ "file" ], filename: "string" })
+const body2 = schema({ name: [ "image" ], size: "number" })
+
+const schema = unfoldSchema([ body, body2 ])
+```
+
+Schema converts to
+```
+{
+  oneOf: [
+    {
+      type: "object",
+      properties: { 
+        name: { type: "string",  const: "file" },
+        filename: { type: "string" }
+      },
+      required: [ "name", "filename" ]
+    },
+    {
+      type: "object",
+      properties: { 
+        name: { type: "string",  const: "image" },
+        size: { type: "number" }
+      },
+      required: [ "name", "size" ]
+    }
+  ]
+}
+```
 
 ## What's up with the types?
 
