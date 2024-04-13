@@ -39,7 +39,7 @@ const parseObjectFields = (props: { [ key: string ]: SchemaItem }) => {
   }
 }
 
-const unfoldArray = (schema: SchemaItem[] | string[]) => {
+const unfoldArray = (schema: SchemaItem[] | string[]): any => {
   const isEnum = !schema.find(item => typeof item !== "string") && schema.find(item => !isBaseType(item as string))
   if (isEnum) {
     if (schema.length === 1) {
@@ -54,7 +54,7 @@ const unfoldArray = (schema: SchemaItem[] | string[]) => {
   }
 }
 
-export const unfoldSchema = (schema: SchemaItem) => {
+export const unfoldSchema = (schema: SchemaItem): any => {
   if (typeof schema === "string") {
     if (schema.endsWith("??")) {
       return { type: trimType(schema), nullable: true }

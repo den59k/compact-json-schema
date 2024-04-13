@@ -4,15 +4,24 @@
   "license": "MIT",
   "author": "Denis Hohryakov <den59k@gmail.com>",
   "repository": "https://github.com/den59k/compact-json-schema",
-  "main": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "type": "module",
   "files": [
-    "src"
+    "dist"
   ],
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "build": "tsc && vite build"
   },
   "devDependencies": {
+    "typescript": "^5.4.5",
     "vite": "^5.2.8",
+    "vite-plugin-dts": "^3.8.2",
     "vitest": "^1.5.0"
   },
   "keywords": [
