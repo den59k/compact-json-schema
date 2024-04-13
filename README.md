@@ -51,7 +51,7 @@ The schema for objects can also be written in two ways:
 ```
 const fullSchema = schema({ user: { type: "object", props: { name: "string" } } })
 const shortSchema = schema({ user: { name: "string" } })
-// fullSchema equal to shortSchema
+// fullSchema is equal to shortSchema
 ```
 
 As you can guess, the full path also allows you to specify the necessary settings for validation, while the short path just uses the defaults.
@@ -61,7 +61,7 @@ As you can guess, the full path also allows you to specify the necessary setting
 Example fastify:
 
 ```
-import { schema, sc } from 'compact-json-schema'
+import { schema, sc, SchemaType } from 'compact-json-schema'
 
 const params = schema({ itemId: "number" })
 const body = schema({ name: "string", surname: "string?", features: { type: "array", items: "string" } })
