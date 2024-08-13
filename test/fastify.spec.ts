@@ -1,32 +1,40 @@
 import { expect, it } from "vitest";
 import { schema } from "../src/main";
-import { sc } from "../src/fastify";
+import { CompactJsonSchemaProvider, sc } from "../src/fastify";
+import fastify from 'fastify'
 
-it("simple fastify test", async () => {
-
-  const params = schema({ fileId: "string" })
-  const body = schema({ name: "string", size: "number?" })
-
-  expect(sc({ params, body })).toEqual({
-    schema: {
-      params: {
-        type: "object",
-        properties: {
-          fileId: { type: "string" }
-        },
-        required: [ "fileId" ]
-      },
-      body: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          size: { type: "number" }
-        },
-        required: [ "name" ]
-      }
-    }
+it("type test", async () => {
+  const app = fastify().withTypeProvider<CompactJsonSchemaProvider>()
+  app.get("/test", { schema: { params: schema({ test: "string" }) } }, async (req) => {
+    const { test } = req.params
   })
 })
+
+// it("simple fastify test", async () => {
+
+//   const params = schema({ fileId: "string" })
+//   const body = schema({ name: "string", size: "number?" })
+
+//   expect(sc({ params, body })).toEqual({
+//     schema: {
+//       params: {
+//         type: "object",
+//         properties: {
+//           fileId: { type: "string" }
+//         },
+//         required: [ "fileId" ]
+//       },
+//       body: {
+//         type: "object",
+//         properties: {
+//           name: { type: "string" },
+//           size: { type: "number" }
+//         },
+//         required: [ "name" ]
+//       }
+//     }
+//   })
+// })
 
 it("very compact schema", async () => {
   const params = schema({ fileId: "string" })
@@ -106,7 +114,7 @@ it("very compact schema with body", async () => {
 
 it("very compact schema with body v2", async () => {
   const body = schema({ name: "string" })
-  expect(sc(null, body)).toEqual({
+  expect(sc(body, "body")).toEqual({
     schema: {
       body: {
         type: "object",

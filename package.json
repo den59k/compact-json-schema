@@ -19,6 +19,7 @@
     "build": "tsc && vite build"
   },
   "devDependencies": {
+    "fastify": "^4.28.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.8",
     "vite-plugin-dts": "^3.8.2",

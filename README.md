@@ -41,14 +41,14 @@ Each type can also be undefined or nullable:
 
 You have two ways to write the schema, full or shorthand:
 
-```
+```ts
 const fullSchema = schema({ name: { type: "string" } })
 const shortSchema = schema({ name: "string" })
 // fullSchema is equal to shortSchema
 ```
 
 The schema for objects can also be written in two ways:
-```
+```ts
 const fullSchema = schema({ user: { type: "object", props: { name: "string" } } })
 const shortSchema = schema({ user: { name: "string" } })
 // fullSchema is equal to shortSchema
@@ -60,7 +60,7 @@ As you can guess, the full path also allows you to specify the necessary setting
 
 You can use array of items for shorthand enum or oneOf types:
 
-```
+```ts
 const body = schema({ name: [ "file" ], filename: "string" })
 const body2 = schema({ name: [ "image" ], size: "number" })
 
@@ -68,7 +68,7 @@ const schema = unfoldSchema([ body, body2 ])
 ```
 
 Schema converts to
-```
+```ts
 {
   oneOf: [
     {
@@ -95,7 +95,7 @@ Schema converts to
 
 Example fastify:
 
-```
+```ts
 import { schema, sc, SchemaType } from 'compact-json-schema'
 
 const params = schema({ itemId: "number" })
@@ -104,6 +104,30 @@ const body = schema({ name: "string", surname: "string?", features: { type: "arr
 fastify.post("/user/:userId", sc({ params, body }), async (req) => {
   const { userId } = req.params as SchemaType<typeof params>      // typeof userId === "number"
   const userData = req.body as SchemaType<typeof body>  
+  /*
+    userData: {
+      name: string
+      surname: string | undefined
+      features: Array<string>
+    }
+  */
+})
+
+```
+
+Fastify also gives you the option of specifying a TypeProvider so that the schema is applied automatically:
+
+```ts
+import { schema, sc, SchemaType, CompactJsonSchemaProvider } from 'compact-json-schema'
+
+const params = schema({ itemId: "number" })
+const body = schema({ name: "string", surname: "string?", features: { type: "array", items: "string" } })
+
+const app = fastify().withTypeProvider<CompactJsonSchemaProvider>()
+
+app.post("/user/:userId", sc({ params, body }), async (req) => {
+  const { userId } = req.params         // typeof userId === "number"
+  const userData = req.body
   /*
     userData: {
       name: string

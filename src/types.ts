@@ -51,7 +51,8 @@ export type SchemaType<T extends SchemaItem> =
   T extends FullType? GetType<T["type"]>: 
   T extends Array<SmallType | FullType | ObjectParams>? SchemaType<T[number]>: 
   T extends Array<string>? T[number]:
-  T extends ObjectParams? GetObjectType<T>: GetType<T>
+  T extends ObjectParams? GetObjectType<T>: 
+  GetType<T>
 
 type GetObjectType<T extends ObjectParams> = {
   [ K in keyof T ]: SchemaType<T[K]>
