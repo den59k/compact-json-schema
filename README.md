@@ -96,12 +96,12 @@ Schema converts to
 Example fastify:
 
 ```ts
-import { schema, sc, SchemaType } from 'compact-json-schema'
+import { schema, sc, SchemaType, unfoldSchema } from 'compact-json-schema'
 
 const params = schema({ itemId: "number" })
 const body = schema({ name: "string", surname: "string?", features: { type: "array", items: "string" } })
 
-fastify.post("/user/:userId", { schema: { params, body } }, async (req) => {
+fastify.post("/user/:userId", { schema: { params: unfoldSchema(params), body: unfoldSchema(body) } }, async (req) => {
   const { userId } = req.params as SchemaType<typeof params>      // typeof userId === "number"
   const userData = req.body as SchemaType<typeof body>  
   /*
@@ -141,6 +141,12 @@ sc(schema({ userId: "number" }, { age: "number" }), "query") -> {
     querystring: { type: "object", properties: { age: { type: "number" } } },
   }
 }
+```
+
+Alternatively, you can pass an object to schema in which you specify the required parameters:
+
+```
+sc({ body: schema({ userId: "number" }) }) -> { schema: { body: { type: "object", properties: { userId: { type: "number" } } } }}
 ```
 
 ## Fastify Type Provider

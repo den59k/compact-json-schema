@@ -3,6 +3,7 @@ import { SchemaItem, SchemaType } from "./types"
 import type { FastifyTypeProvider } from 'fastify'
 
 type SchemaName = 'body' | 'params' | 'querystring' | 'headers'
+const schemaNames = [ "body", "params", "querystring", "headers" ]
 
 type SchemaInput = { [key in SchemaName ]?: SchemaItem }
 
@@ -12,6 +13,7 @@ export const combineSchema = <T extends SchemaInput>(schemas: T) => {
   ) as { [K in keyof T]: any }
 }
 
+export function sc<P extends SchemaInput>(schema: P): { schema: P }
 export function sc<P extends SchemaItem>(params: P): { schema: { params: P } }
 export function sc<P extends SchemaItem, K extends SchemaName>(params: P, type: K): { schema: { [ key in K ]: P } }
 export function sc<P extends SchemaItem, P2 extends SchemaItem>(params: P, body: P2): { schema: { params: P, body: P2 } }
@@ -20,6 +22,14 @@ export function sc<P extends SchemaItem, P2 extends SchemaItem>(params: SchemaIt
   { schema: { params: P, querystring: P2 } }
 
 export function sc(...args: any[]) {
+
+  if (args.length === 1 && typeof args[0] === "object") {
+    const hasOnlySchemaNames = Object.keys(args[0]).reduce((res, item) => res && schemaNames.includes(item), true)
+    if (hasOnlySchemaNames) {
+      return { schema: combineSchema(args[0]) }
+    }
+  }
+
   const lastType = typeof args[args.length-1] === "string"? args[args.length-1]: null
   const keys = [ "params", "body", "querystring" ].slice(0, args.length-(lastType? 2: 0))
   if (lastType) {

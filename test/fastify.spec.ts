@@ -5,36 +5,36 @@ import fastify from 'fastify'
 
 it("type test", async () => {
   const app = fastify().withTypeProvider<CompactJsonSchemaProvider>()
-  app.get("/test", { schema: { params: schema({ test: "string" }) } }, async (req) => {
+  app.get("/test", sc({ params: schema({ test: "string" }) }), async (req) => {
     const { test } = req.params
   })
 })
 
-// it("simple fastify test", async () => {
+it("simple fastify test", async () => {
 
-//   const params = schema({ fileId: "string" })
-//   const body = schema({ name: "string", size: "number?" })
+  const params = schema({ fileId: "string" })
+  const body = schema({ name: "string", size: "number?" })
 
-//   expect(sc({ params, body })).toEqual({
-//     schema: {
-//       params: {
-//         type: "object",
-//         properties: {
-//           fileId: { type: "string" }
-//         },
-//         required: [ "fileId" ]
-//       },
-//       body: {
-//         type: "object",
-//         properties: {
-//           name: { type: "string" },
-//           size: { type: "number" }
-//         },
-//         required: [ "name" ]
-//       }
-//     }
-//   })
-// })
+  expect(sc({ params, body })).toEqual({
+    schema: {
+      params: {
+        type: "object",
+        properties: {
+          fileId: { type: "string" }
+        },
+        required: [ "fileId" ]
+      },
+      body: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          size: { type: "number" }
+        },
+        required: [ "name" ]
+      }
+    }
+  })
+})
 
 it("very compact schema", async () => {
   const params = schema({ fileId: "string" })
