@@ -168,3 +168,13 @@ app.post("/user/:userId", sc({ params, body }), async (req) => {
 })
 
 ```
+
+And there's a little bit of a hack if you want to propagate Schema Provider globally. To do this, add the code:
+
+```
+declare module 'fastify' {
+  interface FastifyTypeProviderDefault {
+    output: this['input'] extends SchemaItem? SchemaType<this['input']>: any,
+  }
+}
+```
