@@ -18,7 +18,10 @@ export function sc<P extends SchemaItem>(params: P): { schema: { params: P } }
 export function sc<P extends SchemaItem, K extends SchemaName>(params: P, type: K): { schema: { [ key in K ]: P } }
 export function sc<P extends SchemaItem, P2 extends SchemaItem>(params: P, body: P2): { schema: { params: P, body: P2 } }
 
-export function sc<P extends SchemaItem, P2 extends SchemaItem>(params: SchemaItem, querystring: SchemaItem, type: "query"): 
+export function sc<P extends SchemaItem, P2 extends SchemaItem, K extends SchemaName>(params: P, body: P2, type: K): 
+  { schema: { params: P } & { [ key in K  ]: P2 } }
+
+export function sc<P extends SchemaItem, P2 extends SchemaItem>(params: P, querystring: P2, type: "query" | "querystring"): 
   { schema: { params: P, querystring: P2 } }
 
 export function sc(...args: any[]) {
