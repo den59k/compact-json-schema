@@ -29,7 +29,7 @@ Converts to
 There are 5 basic types, which are typed as a relevant string:
 
 ```
-"string" | "boolean" | "number" | "integer" | "object" | "array"
+"string" | "boolean" | "integer" | "object" | "array"
 ```
 
 Each type can also be undefined or nullable:
@@ -55,6 +55,36 @@ const shortSchema = schema({ user: { name: "string" } })
 ```
 
 As you can guess, the full path also allows you to specify the necessary settings for validation, while the short path just uses the defaults.
+
+## Type Aliases
+
+You can also extend your types with aliases. To do this, extend the SchemaAliases interface:
+
+```ts
+declare module 'compact-json-schema' {
+  interface SchemaAliases {
+    "file": { "src": "string", "size": "number" }
+  }
+}
+
+```
+
+You will now have a “file” type with your fields. Example:
+
+```ts
+import { SchemaType } from 'compact-json-schema'
+
+const schema = SchemaType<{ file: "file?" }> 
+```
+
+To validate the schema via unfoldSchema, you must also register your alias:
+
+```ts
+import { registerAlias, unfoldSchema } from 'compact-json-schema'
+
+registerAlias("file", { "src": "string", "size": "number" })
+
+```
 
 ## Compact form for union types
 

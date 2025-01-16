@@ -13,6 +13,11 @@ const trimType = (type: SmallType) => {
   return type
 }
 
+const aliases: Record<string, SchemaItem> = {}
+export const registerAlias = (key: string, item: SchemaItem) => {
+  aliases[key] = item
+}
+
 const parseObjectFields = (props: { [ key: string ]: SchemaItem }) => {
   
   const required: string[] = []
@@ -40,6 +45,7 @@ const parseObjectFields = (props: { [ key: string ]: SchemaItem }) => {
 }
 
 const unfoldArray = (schema: SchemaItem[] | string[]): any => {
+  // It is enum if all values is string, and do not match the base types
   const isEnum = !schema.find(item => typeof item !== "string") && schema.find(item => !isBaseType(item as string))
   if (isEnum) {
     if (schema.length === 1) {
@@ -55,11 +61,21 @@ const unfoldArray = (schema: SchemaItem[] | string[]): any => {
 }
 
 export const unfoldSchema = <T extends SchemaItem>(schema: T): any => {
+
   if (typeof schema === "string") {
-    if (schema.endsWith("??")) {
-      return { type: trimType(schema), nullable: true }
+    const trimmedType = trimType(schema)
+
+    if (trimmedType in aliases) {
+      if (schema.endsWith("??")) {
+        return { ...unfoldSchema(aliases[trimmedType]), nullable: true }
+      }
+      return unfoldSchema(aliases[trimmedType])
     }
-    return { type: trimType(schema) }
+
+    if (schema.endsWith("??")) {
+      return { type: trimmedType, nullable: true }
+    }
+    return { type: trimmedType }
   }
 
   if (Array.isArray(schema)) {
@@ -71,13 +87,13 @@ export const unfoldSchema = <T extends SchemaItem>(schema: T): any => {
   }
 
   if (typeof schema.type === "string") {
-    const { items, props, type, ...otherProps } = schema as any 
+    const { items, properties, type, ...otherProps } = schema as any 
 
     return {
       ...unfoldSchema(type),
       ...otherProps,
       items: items? unfoldSchema(items): undefined,
-      ...(props? parseObjectFields(props): {})
+      ...(properties? parseObjectFields(properties): {})
     }
   }
 

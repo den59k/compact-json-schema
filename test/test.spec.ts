@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { unfoldSchema } from '../src/main'
+import { registerAlias, unfoldSchema } from '../src/main'
 
 it("test string schema", () => {
   const string = unfoldSchema("string")
@@ -69,14 +69,14 @@ it("test array schema", () => {
 })
 
 it("test anyOf items", () => {
-  const schema = unfoldSchema({ name: [ "string", "integer" ] })
+  const schema = unfoldSchema({ name: [ "string", "number" ] })
   expect(schema).toEqual({
     type: "object",
     properties: {
       name: {
         oneOf: [
           { type: "string" },
-          { type: "integer" }
+          { type: "number" }
         ]
       }
     },
@@ -93,4 +93,25 @@ it("test enum", () => {
     },
     required: [ "name" ]
   })
+})
+
+it("test alias", () => {
+
+  registerAlias("file", { src: "string" })
+  const schema = unfoldSchema({ file: { type: "file?" } } as any)
+
+  expect(schema).toEqual({
+    type: "object",
+    properties: {
+      file: {
+        type: "object",
+        properties: {
+          src: { type: "string" }
+        },
+        required: [ "src" ]
+      },
+    },
+    required: []
+  })
+
 })
