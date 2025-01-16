@@ -5,7 +5,7 @@ import fastify from 'fastify'
 
 it("type test", async () => {
   const app = fastify().withTypeProvider<CompactJsonSchemaProvider>()
-  app.get("/test", sc({ params: schema({ test: "string" }) }), async (req) => {
+  app.get("/test", sc({ params: schema({ test: { type: "integer" } }) }), async (req) => {
     const { test } = req.params
   })
 })

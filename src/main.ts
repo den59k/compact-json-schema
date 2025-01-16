@@ -54,7 +54,7 @@ const unfoldArray = (schema: SchemaItem[] | string[]): any => {
   }
 }
 
-export const unfoldSchema = (schema: SchemaItem): any => {
+export const unfoldSchema = <T extends SchemaItem>(schema: T): any => {
   if (typeof schema === "string") {
     if (schema.endsWith("??")) {
       return { type: trimType(schema), nullable: true }
