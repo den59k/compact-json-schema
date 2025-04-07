@@ -1,8 +1,13 @@
-export interface SchemaAliases {
-  "integer": "number"
+export interface SchemaTypesMap {
+  "integer": number,
+  "string": string,
+  "number": number,
+  "boolean": boolean,
+  "object": object,
+  "array": Array<any>
 }
 
-type JsonType = "string" | "boolean" | "number" | "object" | "array" | keyof SchemaAliases
+type JsonType = keyof SchemaTypesMap
 type JsonOptional = `${JsonType}?`
 type NullableJson = `${JsonType}??`
 
@@ -34,14 +39,7 @@ type GetType<T extends SmallType> =
     T extends `${infer BaseType }?` ? (BaseType extends JsonType? GetBaseType<BaseType> | undefined: never) :
     GetBaseType<T>;
 
-type GetBaseType<T extends SmallType> = 
-  T extends keyof SchemaAliases? SchemaType<SchemaAliases[T]>:
-  T extends "string"? string: 
-  T extends "number"? number: 
-  T extends "boolean"? boolean: 
-  T extends "object"? object: 
-  T extends "array"? Array<any>:
-  T
+type GetBaseType<T extends SmallType> = T extends keyof SchemaTypesMap? SchemaTypesMap[T]: T
 
 export type SchemaType<T extends SchemaItem> = 
   T extends ConstType? T["const"]:
