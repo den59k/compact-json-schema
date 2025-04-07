@@ -58,12 +58,12 @@ As you can guess, the full path also allows you to specify the necessary setting
 
 ## Type Aliases
 
-You can also extend your types with aliases. To do this, extend the SchemaAliases interface:
+You can also extend your types with aliases. To do this, extend the SchemaTypesMap interface. Note that the type in SchemaTypesMap is defined as an ordinary TS object.
 
 ```ts
 declare module 'compact-json-schema' {
-  interface SchemaAliases {
-    "file": { "src": "string", "size": "number" }
+  interface SchemaTypesMap {
+    "file": { "src": string, "size": number }
   }
 }
 
