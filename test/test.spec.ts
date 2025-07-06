@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { registerAlias, unfoldSchema } from '../src/main'
+import { registerAlias, unfoldSchema } from '../src'
 
 it("test string schema", () => {
   const string = unfoldSchema("string")
@@ -47,6 +47,26 @@ it("test object schema", () => {
     properties: {
       name: {
         type: "string"
+      }
+    }
+  })
+})
+
+it("test nested object schema", () => {
+  const object = unfoldSchema({ name: "string", obj: { type: "object?" }, nullable: { type: "object??", properties: {} } })
+  expect(object).toEqual({
+    type: "object",
+    required: [ "name" ],
+    properties: {
+      name: {
+        type: "string"
+      },
+      obj: { type: "object" },
+      nullable: {
+        type: "object",
+        nullable: true,
+        properties: {},
+        required: [],
       }
     }
   })

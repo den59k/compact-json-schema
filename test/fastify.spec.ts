@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
-import { schema } from "../src/main";
 import { CompactJsonSchemaProvider, sc } from "../src/fastify";
 import fastify from 'fastify'
+import { schema } from "../src";
 
 it("type test", async () => {
   const app = fastify().withTypeProvider<CompactJsonSchemaProvider>()

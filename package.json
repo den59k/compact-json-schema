@@ -19,6 +19,7 @@
     "build": "tsc && vite build"
   },
   "devDependencies": {
+    "@sinclair/typebox": "^0.34.37",
     "fastify": "^4.28.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.8",

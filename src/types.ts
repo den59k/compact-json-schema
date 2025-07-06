@@ -15,8 +15,8 @@ type AllTypes<K extends JsonType> = K | `${K}?` | `${K}??`
 
 export type SmallType = JsonType | JsonOptional | NullableJson
 
-type ObjectType = { type: "object" | "object?" | "object??", properties: ObjectParams }
-type ArrayType = { type: "array" | "array?" | "array??", items: SchemaItem }
+export type ObjectType = { type: "object" | "object?" | "object??", properties: ObjectParams }
+export type ArrayType = { type: "array" | "array?" | "array??", items: SchemaItem }
 type StringType = { type: "string" | "string?" | "string??" }
 type StringEnumType = StringType & { enum: string[] }
 type ConstType = { const: number | string | boolean }
