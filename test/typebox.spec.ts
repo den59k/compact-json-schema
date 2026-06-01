@@ -1,5 +1,5 @@
 import { beforeEach, expect, it } from 'vitest'
-import { registerAlias } from '../src'
+import { registerAlias, unfoldSchema } from '../src'
 import { provideTypeBoxMap, unfoldTypeBoxSchema } from '../src/typebox'
 import { Type } from '@sinclair/typebox'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
@@ -108,8 +108,26 @@ it("test alias", () => {
   }))
 })
 
-it("test optional", () => {
+it("optional", () => {
+  const schema = unfoldTypeBoxSchema({ name: { type: "string?" } } as any)
+  expect(schema).toEqual(Type.Object({
+    name: Type.Optional(Type.String())
+  }))
+})
+it.only("optional2", () => {
+  const schema = unfoldTypeBoxSchema(unfoldSchema({ name: { type: "string?" } } as any))
+  expect(schema).toEqual(Type.Object({
+    name: Type.Optional(Type.String())
+  }))
+})
+it("test nullable", () => {
   const schema = unfoldTypeBoxSchema({ name: { type: "string??" } } as any)
+  expect(schema).toEqual(Type.Object({
+    name: Type.Optional(Type.Union([Type.String(), Type.Null() ]))
+  }))
+})
+it("test nullable2", () => {
+  const schema = unfoldTypeBoxSchema(unfoldSchema({ name: { type: "string??" } } as any))
   expect(schema).toEqual(Type.Object({
     name: Type.Optional(Type.Union([Type.String(), Type.Null() ]))
   }))

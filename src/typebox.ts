@@ -55,21 +55,22 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
 
   if (typeof schema.type === "string") {
     const isNullable = (schema as any).nullable || schema.type.endsWith("??")
+
     const trimmedType = trimType(schema.type)
     if (trimmedType === "array" && "items" in schema) {
       const { type, items, ...otherProps } = schema
 
       return wrapNull(typeMap['array'](unfoldTypeBoxSchema(items), otherProps), isNullable)
     } else if (trimmedType === "object" && "properties" in schema) {
-      const { type, properties, ...otherProps } = schema
-      const { properties: parsedProps, required } = parseObjectFields((properties as any), unfoldTypeBoxSchema)
-
+      const { type, properties, required: required1, ...otherProps } = schema as any
+      const { properties: parsedProps, required: required2 } = parseObjectFields((properties as any), unfoldTypeBoxSchema)
+      const req = required1 ?? required2
       for (let key in parsedProps) {
-        if (!required.includes(key)) {
+        if (!req.includes(key)) {
           parsedProps[key] = typeMap["optional"](parsedProps[key])
         }
       }
-
+      
       return wrapNull(typeMap['object'](parsedProps, otherProps), isNullable)
     } else if (trimmedType === "string" && "enum" in schema) {
       const { type, enum: _enum , ...otherProps } = schema
@@ -79,8 +80,9 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
       }
       return typeMap["union"](arr, otherProps)
     } else {
-      const { type, ...otherProps } = schema
-      return unfoldTypeBoxSchema(schema.type, otherProps)
+      const { type, nullable: _, ...otherProps } = schema as any
+
+      return wrapNull(unfoldTypeBoxSchema(trimmedType as SchemaItem, otherProps), isNullable)
     }
   }
 
