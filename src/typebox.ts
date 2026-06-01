@@ -26,7 +26,7 @@ const unfoldArray = (schema: SchemaItem[] | string[]): any => {
 
 const wrapNull = (obj: any, isNullable: boolean) => {
   if (isNullable) {
-    return typeMap["union"]([ obj, typeMap["null"]() ])
+    return typeMap["optional"](typeMap["union"]([ obj, typeMap["null"]() ]))
   } else {
     return obj
   }
@@ -38,18 +38,11 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
 
     if (trimmedType in aliases) {
       const aliasSchema = unfoldTypeBoxSchema(aliases[trimmedType])
-      if (schema.endsWith("??")) {
-        return typeMap["optional"](typeMap["union"]([ aliasSchema, typeMap["null"]() ]))
-      }
-      return aliasSchema
+      return wrapNull(aliasSchema, schema.endsWith("??"))
     }
 
     const baseSchema = typeMap[trimmedType as BaseType](options)
-    
-    if (schema.endsWith("??")) {
-      return typeMap["union"]([ baseSchema, typeMap["null"]() ])
-    }
-    return baseSchema
+    return wrapNull(baseSchema, schema.endsWith("??"))
   }
 
   if (Array.isArray(schema)) {
@@ -61,7 +54,7 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
   }
 
   if (typeof schema.type === "string") {
-    const isNullable = schema.type.endsWith("??")
+    const isNullable = (schema as any).nullable || schema.type.endsWith("??")
     const trimmedType = trimType(schema.type)
     if (trimmedType === "array" && "items" in schema) {
       const { type, items, ...otherProps } = schema
