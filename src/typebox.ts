@@ -2,7 +2,7 @@ import { BaseType, isBaseType, parseObjectFields, trimType } from './utils'
 import { aliases } from './aliases'
 import { SchemaItem } from './types'
 
-type TypeMap = Record<BaseType | "union" | "null" | "literal" | "optional", any>
+type TypeMap = Record<BaseType | "union" | "null" | "literal" | "optional" | "any", any>
 let typeMap: TypeMap = {} as any
 
 export const provideTypeBoxMap = (map: TypeMap) => {
@@ -39,7 +39,7 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
     if (trimmedType in aliases) {
       const aliasSchema = unfoldTypeBoxSchema(aliases[trimmedType])
       if (schema.endsWith("??")) {
-        return typeMap["union"]([ aliasSchema, typeMap["null"]() ])
+        return typeMap["optional"](typeMap["union"]([ aliasSchema, typeMap["null"]() ]))
       }
       return aliasSchema
     }

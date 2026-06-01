@@ -2,6 +2,7 @@ import { beforeEach, expect, it } from 'vitest'
 import { registerAlias } from '../src'
 import { provideTypeBoxMap, unfoldTypeBoxSchema } from '../src/typebox'
 import { Type } from '@sinclair/typebox'
+import { TypeCompiler } from '@sinclair/typebox/compiler'
 
 beforeEach(() => {
   provideTypeBoxMap({
@@ -16,6 +17,7 @@ beforeEach(() => {
     null: Type.Null,
     literal: Type.Literal,
     optional: Type.Optional,
+    any: Type.Any
   })
 })
 
@@ -60,7 +62,6 @@ it("test nested object schema", () => {
   }))
 })
 
-
 it("test array schema", () => {
   const arr = unfoldTypeBoxSchema({ type: "array", items: { name: "string" } })
   expect(arr).toEqual(Type.Array(
@@ -69,6 +70,19 @@ it("test array schema", () => {
     })
   ))
 })
+
+
+it("test array schema2", () => {
+  const arr = unfoldTypeBoxSchema({ type: "array", items: {} })
+
+  const _compiled = TypeCompiler.Compile(arr)
+  expect(_compiled).not.toBeNull()
+
+  expect(arr).toEqual(Type.Array(
+    Type.Object({})
+  ))
+})
+
 
 it("test anyOf items", () => {
   const schema = unfoldTypeBoxSchema({ name: [ "string", "number" ] })
@@ -91,5 +105,12 @@ it("test alias", () => {
     file: Type.Optional(Type.Object({
       src: Type.String()
     }))
+  }))
+})
+
+it("test optional", () => {
+  const schema = unfoldTypeBoxSchema({ name: { type: "string??" } } as any)
+  expect(schema).toEqual(Type.Object({
+    name: Type.Optional(Type.Union([Type.String(), Type.Null() ]))
   }))
 })
