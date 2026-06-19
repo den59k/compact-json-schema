@@ -5,8 +5,8 @@ import { SchemaItem } from './types'
 type TypeMap = Record<BaseType | "union" | "null" | "literal" | "optional" | "any", any>
 let typeMap: TypeMap = {} as any
 
-export const provideTypeBoxMap = (map: TypeMap) => {
-  typeMap = map
+export const provideTypeBoxMap = (map: Partial<TypeMap>) => {
+  typeMap = map as TypeMap
 }
 
 const unfoldArray = (schema: SchemaItem[] | string[]): any => {
