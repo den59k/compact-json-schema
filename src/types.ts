@@ -15,18 +15,30 @@ type AllTypes<K extends JsonType> = K | `${K}?` | `${K}??`
 
 export type SmallType = JsonType | JsonOptional | NullableJson
 
-export type ObjectType = { type: "object" | "object?" | "object??", properties: ObjectParams }
-export type ArrayType = { type: "array" | "array?" | "array??", items: SchemaItem }
-type StringType = { type: "string" | "string?" | "string??" }
-type StringEnumType = StringType & { enum: string[] }
-type ConstType = { const: number | string | boolean }
+/**
+ * Annotation keywords that may accompany any typed schema object without
+ * changing the inferred TS type (see SchemaType). They are passed through as-is
+ * by unfoldSchema, so e.g. `{ type: "string", default: "x" }` is valid and keeps
+ * its runtime default. Kept to the bare minimum (`default` carries real semantic
+ * weight); augment this interface via declaration merging to allow more, e.g.
+ * `description`, `title`, or domain-specific keywords like `format`.
+ */
+export interface SchemaAnnotations {
+  default?: any
+}
 
-type FullType = 
-  StringType | 
+export type ObjectType = { type: "object" | "object?" | "object??", properties: ObjectParams } & SchemaAnnotations
+export type ArrayType = { type: "array" | "array?" | "array??", items: SchemaItem } & SchemaAnnotations
+type StringType = { type: "string" | "string?" | "string??" } & SchemaAnnotations
+type StringEnumType = StringType & { enum: string[] }
+type ConstType = { const: number | string | boolean } & SchemaAnnotations
+
+type FullType =
+  StringType |
   StringEnumType |
   ObjectType |
   ArrayType |
-  { type: SmallType }
+  ({ type: SmallType } & SchemaAnnotations)
 
 export type SchemaItem = SmallType | FullType | ObjectParams | Array<SmallType | FullType | ObjectParams> | Array<string>
 

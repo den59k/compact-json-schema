@@ -4,7 +4,7 @@ export { unfoldSchema } from './main'
 export { registerAlias } from './aliases'
 export { combineSchema, sc } from './fastify'
 export type { CompactJsonSchemaProvider } from './fastify'
-export type { SchemaType, SchemaItem, SchemaTypesMap } from './types'
+export type { SchemaType, SchemaItem, SchemaTypesMap, SchemaAnnotations } from './types'
 
 export { provideTypeBoxMap, unfoldTypeBoxSchema } from './typebox'
 
