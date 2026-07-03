@@ -26,10 +26,10 @@ Converts to
 
 ## Using
 
-There are 5 basic types, which are typed as a relevant string:
+There are 8 basic types, which are typed as a relevant string:
 
 ```
-"string" | "boolean" | "integer" | "object" | "array"
+"string" | "boolean" | "number" | "integer" | "bigint" | "object" | "array" | "date"
 ```
 
 Each type can also be undefined or nullable:
@@ -38,6 +38,14 @@ Each type can also be undefined or nullable:
 "string?"    // Undefined type
 "string??"   // Nullable or undefined type
 ```
+
+The `date` type describes a point in time (typed as a JS `Date`). `unfoldSchema`
+passes it through as `{ type: "date" }` — how the value is validated and decoded
+is up to the consumer. Validators built on `unfoldTypeBoxSchema` provide their
+own factory for it via `provideTypeBoxMap` (e.g. [dynara](https://github.com/den59k/dynara)
+accepts an ISO string or epoch milliseconds and decodes it into a `Date`
+instance). Plain JSON-Schema validators like ajv have no `date` type, so avoid
+it in schemas destined for fastify.
 
 You have two ways to write the schema, full or shorthand:
 

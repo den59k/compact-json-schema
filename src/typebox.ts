@@ -41,8 +41,11 @@ export const unfoldTypeBoxSchema = <T extends SchemaItem>(schema: T, options?: a
       return wrapNull(aliasSchema, schema.endsWith("??"))
     }
 
-    const baseSchema = typeMap[trimmedType as BaseType](options)
-    return wrapNull(baseSchema, schema.endsWith("??"))
+    const factory = typeMap[trimmedType as BaseType]
+    if (typeof factory !== "function") {
+      throw new Error(`Unknown schema type "${trimmedType}": the provided TypeBox map has no factory for it (see provideTypeBoxMap)`)
+    }
+    return wrapNull(factory(options), schema.endsWith("??"))
   }
 
   if (Array.isArray(schema)) {

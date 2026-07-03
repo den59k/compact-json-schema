@@ -4,6 +4,10 @@ import { provideTypeBoxMap, unfoldTypeBoxSchema } from '../src/typebox'
 import { Type } from '@sinclair/typebox'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
 
+// A stand-in for a validator-specific date factory (dynara provides a
+// Transform that decodes to a JS Date; the structure doesn't matter here).
+const dateType = (options?: any) => Type.String({ format: "date-time", ...options })
+
 beforeEach(() => {
   provideTypeBoxMap({
     string: Type.String,
@@ -13,6 +17,7 @@ beforeEach(() => {
     object: Type.Object,
     array: Type.Array,
     bigint: Type.BigInt,
+    date: dateType,
     union: Type.Union,
     null: Type.Null,
     literal: Type.Literal,
@@ -114,7 +119,7 @@ it("optional", () => {
     name: Type.Optional(Type.String())
   }))
 })
-it.only("optional2", () => {
+it("optional2", () => {
   const schema = unfoldTypeBoxSchema(unfoldSchema({ name: { type: "string?" } } as any))
   expect(schema).toEqual(Type.Object({
     name: Type.Optional(Type.String())
@@ -131,4 +136,25 @@ it("test nullable2", () => {
   expect(schema).toEqual(Type.Object({
     name: Type.Optional(Type.Union([Type.String(), Type.Null() ]))
   }))
+})
+
+it("test date schema", () => {
+  const schema = unfoldTypeBoxSchema({ birthday: "date", updatedAt: "date?", deletedAt: "date??" })
+  expect(schema).toEqual(Type.Object({
+    birthday: dateType(),
+    updatedAt: Type.Optional(dateType()),
+    deletedAt: Type.Optional(Type.Union([ dateType(), Type.Null() ]))
+  }))
+})
+
+it("test date schema survives a json unfold round-trip", () => {
+  const schema = unfoldTypeBoxSchema(unfoldSchema({ birthday: { type: "date??" } }))
+  expect(schema).toEqual(Type.Object({
+    birthday: Type.Optional(Type.Union([ dateType(), Type.Null() ]))
+  }))
+})
+
+it("throws a clear error for a type missing from the map", () => {
+  provideTypeBoxMap({ string: Type.String, object: Type.Object, optional: Type.Optional })
+  expect(() => unfoldTypeBoxSchema({ birthday: "date" })).toThrowError(/Unknown schema type "date"/)
 })

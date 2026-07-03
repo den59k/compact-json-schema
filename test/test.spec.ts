@@ -135,3 +135,15 @@ it("test alias", () => {
   })
 
 })
+it("test date schema", () => {
+  const schema = unfoldSchema({ birthday: "date", updatedAt: "date?", deletedAt: "date??" })
+  expect(schema).toEqual({
+    type: "object",
+    properties: {
+      birthday: { type: "date" },
+      updatedAt: { type: "date" },
+      deletedAt: { type: "date", nullable: true }
+    },
+    required: [ "birthday" ]
+  })
+})

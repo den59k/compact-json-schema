@@ -4,7 +4,13 @@ export interface SchemaTypesMap {
   "number": number,
   "boolean": boolean,
   "object": object,
-  "array": Array<any>
+  "array": Array<any>,
+  /**
+   * A point in time. What the validated value looks like is up to the
+   * validator: dynara decodes an ISO string / epoch-millis number into a JS
+   * Date, so handlers receive a real Date instance.
+   */
+  "date": Date
 }
 
 type JsonType = keyof SchemaTypesMap

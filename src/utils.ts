@@ -1,6 +1,6 @@
 import { SchemaItem, SmallType } from "./types"
 
-const baseTypes = [ "string", "boolean", "number", "integer", "bigint", "object", "array" ] as const
+const baseTypes = [ "string", "boolean", "number", "integer", "bigint", "object", "array", "date" ] as const
 export const isBaseType = (key: string) => {
   return baseTypes.some(item => item === key || item+"?" === key || item+"??" === key)
 }
